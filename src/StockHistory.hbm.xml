@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="StockHistory" table="StockHistory">
+        <meta attribute="class-description">
+            This stock contains the historical records for each stock
+        </meta>
+        <id name="recordId" type="int" column="recordId">
+            <generator class="native"/>
+        </id>
+        <property name="stockSymbol" column="stockSymbol" type="string"/>
+        <property name="recordDate" column="recordDate" type="string"/>
+        <property name="dayOpen" column="dayOpen" type="double"/>
+        <property name="dayHigh" column="dayHigh" type="double"/>
+        <property name="dayLow" column="dayLow" type="double"/>
+        <property name="dayClose" column="dayClose" type="double"/>
+        <property name="volume" column="volume" type="int"/>
+    </class>
+</hibernate-mapping>
