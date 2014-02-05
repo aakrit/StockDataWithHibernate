@@ -7,49 +7,60 @@ package stocks;
  * Time: 8:32 PM
  * To change this template use File | Settings | File Templates.
  */
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.sql.Date;
+import java.io.*;
+import java.util.Calendar;
 import java.util.Scanner;
-import java.util.StringTokenizer;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.*;
+//import java.util.
 
 public class StockData{
 
     private static Scanner file;
     private static String[] line;
-    private static double dayHigh, dayLow, dayClose;
+    private static double dayOpen, dayHigh, dayLow, dayClose;
     private static long volume;
     private static String stockSymbol, stockName;
-    private static Date date;
+    private static String date;
+    private static boolean DatabaseConfig = false;
 
-    public static void readInputFromFile() throws IOException{
+    public static void readInputFromFile() throws IOException, InterruptedException{
         String read;
         int lineIncrement = 0;
         boolean done = false;
         boolean matrixB = false;
+        int numRecords = 0;
         while (file.hasNextLine())
         {
+            int i = 0;
             line = file.nextLine().split(",");
-            stockSymbol = line[0];
-            date = Date.valueOf(line[1]);
-            dayHigh = Double.parseDouble(line[2]);
-            dayLow = Double.parseDouble(line[3]);
-            dayClose = Double.parseDouble(line[4]);
-            volume = Integer.parseInt(line[5]);
+            printValues();
 
+            stockSymbol = line[i++];
+            date = line[i++];
+            dayOpen = Double.parseDouble(line[i++]);
+            dayHigh = Double.parseDouble(line[i++]);
+            dayLow = Double.parseDouble(line[i++]);
+            dayClose = Double.parseDouble(line[i++]);
+            volume = Long.parseLong(line[i++]);
             insertIntoDataBaseUsingHibernate();
+            numRecords++;
         }
         file.close();
+        System.out.println("Inserted "+numRecords+" records in database");
     }
 
     public static void insertIntoDataBaseUsingHibernate()
     {
+         //using JDBC
+         if(!DatabaseConfig){
 
+         }
+    }
+    public static void printValues() throws InterruptedException
+    {
+        for (String s: line) System.out.println(s);
+
+        Thread.sleep(5000);
     }
 
     public static void main(String[] args)
@@ -58,7 +69,7 @@ public class StockData{
         {
             try//get the filename to read from and the number of threads to launch
             {
-                file = new Scanner(new FileReader("input_file"));
+                file = new Scanner(new FileReader("/Users/aakritprasad/IdeaProjects/StockData/src/StockEndOfDayData.csv"));
                 readInputFromFile();
             }catch (Exception e)
             {
