@@ -9,6 +9,7 @@ package stocks;
  */
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Iterator;
 import org.hibernate.HibernateException;
@@ -57,7 +58,7 @@ public class StockData{
         System.out.println("Inserted "+numRecords+" records in database");
     }
 
-    public void addStock(String stockSymbol, String stockname){
+    public void addStock(String stockSymbol, String stockName){
         Session session = factory.openSession();
         Transaction trans = null;
         try{
@@ -88,18 +89,55 @@ public class StockData{
             session.close();
         }
     }
-
+    public void listStocks(){
+        Session session = factory.openSession();
+        Transaction trans = null;
+        try{
+            trans = session.beginTransaction();
+            List stocks = session.createQuery("FROM StockList").list();
+            for (Iterator i = stocks.iterator(); i.hasNext();){
+                StockList st = (StockList) i.next();
+                System.out.println("Symbol: "+st.getSymbol()+" Name: "+ st.getName());
+            }
+            trans.commit();
+        }catch (HibernateException e) {
+            if (trans!=null) trans.rollback();
+            e.printStackTrace();
+        }finally {
+            session.close();
+        }
+    }
+    //list of all stocks by recoreds
+    public void listStockRecords(String symbol){
+        Session session = factory.openSession();
+        Transaction trans = null;
+        try{
+            trans = session.beginTransaction();
+            List stocks = session.createQuery("FROM StockHistory S WHERE S.stockSymbol = "+symbol+" ORDER BY S.recordDate ASC").list();
+            for (Iterator i = stocks.iterator(); i.hasNext();){
+                StockList st = (StockList) i.next();
+                System.out.println("Symbol: "+st.getSymbol()+" Name: "+ st.getName());
+            }
+            trans.commit();
+        }catch (HibernateException e) {
+            if (trans!=null) trans.rollback();
+            e.printStackTrace();
+        }finally {
+            session.close();
+        }
+    }
     public static void printValues() throws InterruptedException
     {
         for (String s: line) System.out.println(s);
 
-        Thread.sleep(5000);
+        Thread.sleep(2000);
     }
 
     public static void main(String[] args)
     {
         sd = new StockData();
         try{
+            Class.forName("com.mysql.jdbc.Driver");
             factory = new Configuration().configure().buildSessionFactory();
         }catch (Throwable ex) {
             System.err.println("Failed to create sessionFactory object." + ex);
