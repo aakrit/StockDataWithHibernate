@@ -4,7 +4,7 @@
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="StockHistory" table="StockHistory">
+    <class name="stocks.StockHistory" table="StockHistory">
         <meta attribute="class-description">
             This stock contains the historical records for each stock
         </meta>

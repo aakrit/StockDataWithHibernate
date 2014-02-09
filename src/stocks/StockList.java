@@ -9,18 +9,22 @@ package stocks;
  */
 public class StockList
 {
-    private String symbol, name;
 
-//    public int getId() {
-//        return id;
-//    }
-//    public void setId(int id) {
-//        this.id = id;
-//    }
+
+    private String symbol, name;
+    private int stockId;
+
     public StockList(){}
     public StockList(String symbol, String name){
         this.symbol = symbol;
         this.name = name;
+    }
+    public int getStockId() {
+        return stockId;
+    }
+
+    public void setStockId(int stockId) {
+        this.stockId = stockId;
     }
     public String getSymbol() {
         return symbol;

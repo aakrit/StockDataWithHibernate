@@ -4,13 +4,14 @@
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="StockList" table="StockList">
+    <class name="stocks.StockList" table="StockList">
         <meta attribute="class-description">
             This class contains a list of all stocks symbols and names
         </meta>
-        <id name="symbol" type="string" column="stockSymbol">
+        <id name="stockId" type="int" column="stockId">
             <generator class="native"/>
         </id>
+        <property name="symbol" column="stockSymbol" type="string"/>
         <property name="name" column="stockName" type="string"/>
     </class>
 </hibernate-mapping>

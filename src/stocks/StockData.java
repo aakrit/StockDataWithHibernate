@@ -9,21 +9,19 @@ package stocks;
  */
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Iterator;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+
+import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.Transaction;
 
 public class StockData{
 
     private static SessionFactory factory;
     private static StockData sd;
-
-    private static Scanner file;
+    private static Scanner file, file2;
     private static String[] line;
     private static double dayOpen, dayHigh, dayLow, dayClose;
     private static int volume;
@@ -31,17 +29,29 @@ public class StockData{
     private static String date;
     private static boolean DatabaseConfig = false;
 
-    public static void readInputFromFile() throws IOException, InterruptedException{
-        String read;
-        int lineIncrement = 0;
-        boolean done = false;
-        boolean matrixB = false;
+    private static int stockSymbolRecords = 0;
+
+    public static void readInputFromStockSymbols() throws IOException, InterruptedIOException, InterruptedException {
+        boolean firstRead = true;
+        while(file2.hasNextLine()){
+            line = file2.nextLine().split(",");
+            if(firstRead){
+                firstRead = false;
+                continue;
+            }
+            stockSymbol = line[0];
+            stockName = line[1];
+            sd.addStock(stockSymbol, stockName);
+            printValues(line);
+        }
+        System.out.println("Total records added: " + stockSymbolRecords);
+    }
+    public static void readInputFromHistoryFile() throws IOException, InterruptedException{
         int numRecords = 0;
         while (file.hasNextLine())
         {
             int i = 0;
             line = file.nextLine().split(",");
-            printValues();
 
             stockSymbol = line[i++];
             date = line[i++];
@@ -50,8 +60,9 @@ public class StockData{
             dayLow = Double.parseDouble(line[i++]);
             dayClose = Double.parseDouble(line[i++]);
             volume = Integer.parseInt(line[i++]);
-            sd.addStock(stockSymbol, null);
-            sd.addStockHistory(stockSymbol, date, dayOpen, dayHigh, dayLow, dayClose, volume);
+            sd.addStock(stockSymbol, "unknownName");
+//            sd.addStockHistory(stockSymbol, date, dayOpen, dayHigh, dayLow, dayClose, volume);
+            sd.listStocks();
             numRecords++;
         }
         file.close();
@@ -59,6 +70,9 @@ public class StockData{
     }
 
     public void addStock(String stockSymbol, String stockName){
+        //check to see if the stock symbol exists in the database table
+//        if(sd.doesStockSymbolExists(stockSymbol)) return;
+        //if it doesn't then add it
         Session session = factory.openSession();
         Transaction trans = null;
         try{
@@ -70,8 +84,23 @@ public class StockData{
             if (trans!=null) trans.rollback();
             e.printStackTrace();
         }finally {
+            stockSymbolRecords++;
             session.close();
         }
+    }
+    public boolean doesStockSymbolExists(String stockSymbol){
+        Session session = factory.openSession();
+        try{
+            String exist = "SELECT S.stockSymbol FROM stocklist AS S WHERE S.stockSymbol="+stockSymbol;
+            Query q = session.createQuery(exist);
+            List ret = q.list();
+            if(ret.size() != 0) return false;    //symbol NOT found
+        }catch (HibernateException e) {
+            e.printStackTrace();
+        }finally {
+            session.close();
+        }
+        return true;
     }
     public void addStockHistory(String sym, String date, double open, double high,
                                 double low, double close, int vol){
@@ -126,11 +155,11 @@ public class StockData{
             session.close();
         }
     }
-    public static void printValues() throws InterruptedException
+    public static void printValues(String[] l) throws InterruptedException
     {
-        for (String s: line) System.out.println(s);
+        for (String s: l) System.out.println(s);
 
-        Thread.sleep(2000);
+//        Thread.sleep(1000);
     }
 
     public static void main(String[] args)
@@ -148,7 +177,8 @@ public class StockData{
             try//get the filename to read from and the number of threads to launch
             {
                 file = new Scanner(new FileReader("/Users/aakritprasad/IdeaProjects/StockData/src/StockEndOfDayData.csv"));
-                readInputFromFile();
+                file2 = new Scanner(new FileReader("/Users/aakritprasad/IdeaProjects/StockData/src/NYSE.csv"));
+                readInputFromStockSymbols();
             }catch (Exception e)
             {
                 e.printStackTrace();
@@ -159,7 +189,8 @@ public class StockData{
             try//get the filename to read from and the number of threads to launch
             {
                 file = new Scanner(new FileReader(args[0]));
-                readInputFromFile();
+                file2 = new Scanner(new FileReader("/Users/aakritprasad/IdeaProjects/StockData/src/NYSE.csv"));
+                readInputFromStockSymbols();
             }catch (Exception e)
             {
                 e.printStackTrace();
