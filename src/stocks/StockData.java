@@ -60,7 +60,6 @@ public class StockData{
             dayLow = Double.parseDouble(line[i++]);
             dayClose = Double.parseDouble(line[i++]);
             volume = Integer.parseInt(line[i++]);
-            sd.addStock(stockSymbol, "unknownName");
 //            sd.addStockHistory(stockSymbol, date, dayOpen, dayHigh, dayLow, dayClose, volume);
             sd.listStocks();
             numRecords++;
@@ -69,10 +68,11 @@ public class StockData{
         System.out.println("Inserted "+numRecords+" records in database");
     }
 
-    public void addStock(String stockSymbol, String stockName){
+    public void addStock(String stockSymbol, String stockName) throws InterruptedException{
         //check to see if the stock symbol exists in the database table
-//        if(sd.doesStockSymbolExists(stockSymbol)) return;
+        if(sd.doesStockSymbolExists(stockSymbol)) return;
         //if it doesn't then add it
+        System.out.println("New Stock added: "+ stockSymbol + ", "+ stockName);
         Session session = factory.openSession();
         Transaction trans = null;
         try{
@@ -88,18 +88,24 @@ public class StockData{
             session.close();
         }
     }
-    public boolean doesStockSymbolExists(String stockSymbol){
+    public boolean doesStockSymbolExists(String stockSymbol) throws InterruptedException{
         Session session = factory.openSession();
         try{
-            String exist = "SELECT S.stockSymbol FROM stocklist AS S WHERE S.stockSymbol="+stockSymbol;
-            Query q = session.createQuery(exist);
-            List ret = q.list();
-            if(ret.size() != 0) return false;    //symbol NOT found
+            String exist = "SELECT stockSymbol FROM stocklist WHERE stockSymbol=\""+stockSymbol+"\"";
+            List ret = session.createSQLQuery(exist).list();
+            Iterator e = ret.iterator();
+
+            if(e.hasNext() == false){
+                System.out.println("Stock NOT Found: "+stockSymbol);
+                return false;    //symbol NOT found
+            }
         }catch (HibernateException e) {
             e.printStackTrace();
         }finally {
             session.close();
         }
+        System.out.println("Stock Found: "+stockSymbol);
+        Thread.sleep(1000);
         return true;
     }
     public void addStockHistory(String sym, String date, double open, double high,

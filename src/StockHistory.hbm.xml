@@ -18,5 +18,6 @@
         <property name="dayLow" column="dayLow" type="double"/>
         <property name="dayClose" column="dayClose" type="double"/>
         <property name="volume" column="volume" type="int"/>
+
     </class>
 </hibernate-mapping>
