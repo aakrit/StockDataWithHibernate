@@ -43,6 +43,7 @@ public class StockData{
             sd.addStock(stockSymbol, stockName);
 //            printValues(line);
         }
+        file2.close();
         System.out.println("Total new stocks added: " + stockSymbolRecords);
     }
     public static void readInputFromHistoryFile() throws IOException, InterruptedException{
@@ -224,6 +225,7 @@ public class StockData{
                 e.printStackTrace();
             }
         }
+        factory.close();
         long finishTime = System.currentTimeMillis();
         System.out.println("Time taken for computation: "+((double)((finishTime-startTime)/1000))+" seconds!");
         //Type an SQL Query to search for results
