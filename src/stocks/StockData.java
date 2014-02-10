@@ -27,11 +27,10 @@ public class StockData{
     private static int volume;
     private static String stockSymbol, stockName;
     private static String date;
-    private static boolean DatabaseConfig = false;
 
     private static int stockSymbolRecords = 0;
 
-    public static void readInputFromStockSymbols() throws IOException, InterruptedIOException, InterruptedException {
+    public static void readInputFromStockSymbols() throws IOException, InterruptedException {
         boolean firstRead = true;
         while(file2.hasNextLine()){
             line = file2.nextLine().split(",");
@@ -42,9 +41,9 @@ public class StockData{
             stockSymbol = line[0];
             stockName = line[1];
             sd.addStock(stockSymbol, stockName);
-            printValues(line);
+//            printValues(line);
         }
-        System.out.println("Total records added: " + stockSymbolRecords);
+        System.out.println("Total new stocks added: " + stockSymbolRecords);
     }
     public static void readInputFromHistoryFile() throws IOException, InterruptedException{
         int numRecords = 0;
@@ -61,12 +60,16 @@ public class StockData{
             volume = Integer.parseInt(line[i++]);
             //query the stockid from the stocksymbol
             int stockid = sd.findStockId(stockSymbol);
-//            sd.addStockHistory(stockid, date, dayOpen, dayHigh, dayLow, dayClose, volume);
-//            sd.listStocks();
+            if(stockid == 0){
+                System.out.println("Could not add because stock not in database yet: "+stockSymbol);
+                continue;
+            }
+            sd.addStockHistory(stockid, date, dayOpen, dayHigh, dayLow, dayClose, volume);
             numRecords++;
+
         }
         file.close();
-        System.out.println("Inserted "+numRecords+" records in database");
+        System.out.println("Inserted "+numRecords+" stock daily data records.");
     }
     public int findStockId(String stockSymbol){
         Session session = factory.openSession();
@@ -75,11 +78,9 @@ public class StockData{
             List ret = session.createSQLQuery("SELECT stockid FROM stocklist WHERE stockSymbol=\""+stockSymbol+"\"").list();
             Iterator e = ret.iterator();
             if(e.hasNext() == false) {
-                System.out.println("Cannot add stock entry since Stock record not in database");
                 return stockIdVal;
             }
-            StockList sl = (StockList) e.next();
-            return sl.getStockId();
+            stockIdVal = (Integer) e.next();
 
         } catch (HibernateException e){
             e.printStackTrace();
@@ -96,12 +97,12 @@ public class StockData{
         Session session = factory.openSession();
         Transaction trans = null;
         try{
-            trans = session.beginTransaction();
+//            trans = session.beginTransaction();
             StockList stock = new StockList(stockSymbol, stockName);
             session.save(stock);
-            trans.commit();
+//            trans.commit();
         }catch (HibernateException e) {
-            if (trans!=null) trans.rollback();
+//            if (trans!=null) trans.rollback();
             e.printStackTrace();
         }finally {
             stockSymbolRecords++;
@@ -114,9 +115,7 @@ public class StockData{
             String exist = "SELECT stockSymbol FROM stocklist WHERE stockSymbol=\""+stockSymbol+"\"";
             List ret = session.createSQLQuery(exist).list();
             Iterator e = ret.iterator();
-
             if(e.hasNext() == false){
-                System.out.println("Stock NOT Found: "+stockSymbol);
                 return false;    //symbol NOT found
             }
         }catch (HibernateException e) {
@@ -124,16 +123,16 @@ public class StockData{
         }finally {
             session.close();
         }
-        System.out.println("Stock Found: "+stockSymbol);
+//        System.out.println("Stock Found: "+stockSymbol);
         return true;
     }
-    public void addStockHistory(String sym, String date, double open, double high,
+    public void addStockHistory(int stockId, String date, double open, double high,
                                 double low, double close, int vol){
         Session session = factory.openSession();
         Transaction trans = null;
         try{
             trans = session.beginTransaction();
-            StockHistory stock = new StockHistory(sym, date, open, high, low, close, vol);
+            StockHistory stock = new StockHistory(stockId, date, open, high, low, close, vol);
             session.save(stock);
             trans.commit();
         }catch (HibernateException e) {
@@ -191,6 +190,7 @@ public class StockData{
     public static void main(String[] args)
     {
         sd = new StockData();
+        long startTime = System.currentTimeMillis();
         try{
             Class.forName("com.mysql.jdbc.Driver");
             factory = new Configuration().configure().buildSessionFactory();
@@ -205,6 +205,8 @@ public class StockData{
                 file = new Scanner(new FileReader("/Users/aakritprasad/IdeaProjects/StockData/src/StockEndOfDayData.csv"));
                 file2 = new Scanner(new FileReader("/Users/aakritprasad/IdeaProjects/StockData/src/NYSE.csv"));
                 readInputFromStockSymbols();
+                readInputFromHistoryFile();
+
             }catch (Exception e)
             {
                 e.printStackTrace();
@@ -217,14 +219,16 @@ public class StockData{
                 file = new Scanner(new FileReader(args[0]));
                 file2 = new Scanner(new FileReader("/Users/aakritprasad/IdeaProjects/StockData/src/NYSE.csv"));
                 readInputFromStockSymbols();
+                readInputFromHistoryFile();
             }catch (Exception e)
             {
                 e.printStackTrace();
             }
         }
-
+        long finishTime = System.currentTimeMillis();
+        System.out.println("Time taken for computation: "+((double)((finishTime-startTime)/1000))+" seconds!");
         //Type an SQL Query to search for results
-
+        return;
     }
 
 }

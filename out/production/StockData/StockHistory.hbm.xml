@@ -11,7 +11,7 @@
         <id name="recordId" type="int" column="recordId">
             <generator class="native"/>
         </id>
-        <property name="stockSymbol" column="stockSymbol" type="string"/>
+        <property name="stockId" column="stockId" type="int"/>
         <property name="recordDate" column="recordDate" type="string"/>
         <property name="dayOpen" column="dayOpen" type="double"/>
         <property name="dayHigh" column="dayHigh" type="double"/>

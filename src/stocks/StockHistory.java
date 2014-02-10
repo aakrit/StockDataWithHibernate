@@ -9,13 +9,11 @@ package stocks;
  */
 public class StockHistory
 {
-    private int recordId, volume;
+    private int recordId, stockId, volume;
     private double dayOpen, dayHigh, dayLow, dayClose;
-    private String stockSymbol, recordDate;
-
-    public StockHistory(){}
-    public StockHistory(String sym, String date, double open, double high, double low, double close, int vol){
-        stockSymbol = sym;
+    private String recordDate;
+    public StockHistory(int id, String date, double open, double high, double low, double close, int vol){
+        stockId = id;
         recordDate = date;
         dayOpen = open;
         dayHigh = high;
@@ -30,7 +28,13 @@ public class StockHistory
     public void setRecordId(int recordId) {
         this.recordId = recordId;
     }
+    public int getStockId() {
+        return stockId;
+    }
 
+    public void setStockId(int stockId) {
+        this.stockId = stockId;
+    }
     public int getVolume() {
         return volume;
     }
@@ -46,13 +50,7 @@ public class StockHistory
     public void setDayOpen(double dayOpen) {
         this.dayOpen = dayOpen;
     }
-    public String getStockSymbol() {
-        return stockSymbol;
-    }
 
-    public void setStockSymbol(String stockSymbol) {
-        this.stockSymbol = stockSymbol;
-    }
     public double getDayHigh() {
         return dayHigh;
     }
