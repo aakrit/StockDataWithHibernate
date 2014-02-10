@@ -52,7 +52,6 @@ public class StockData{
         {
             int i = 0;
             line = file.nextLine().split(",");
-
             stockSymbol = line[i++];
             date = line[i++];
             dayOpen = Double.parseDouble(line[i++]);
@@ -60,14 +59,35 @@ public class StockData{
             dayLow = Double.parseDouble(line[i++]);
             dayClose = Double.parseDouble(line[i++]);
             volume = Integer.parseInt(line[i++]);
-//            sd.addStockHistory(stockSymbol, date, dayOpen, dayHigh, dayLow, dayClose, volume);
-            sd.listStocks();
+            //query the stockid from the stocksymbol
+            int stockid = sd.findStockId(stockSymbol);
+//            sd.addStockHistory(stockid, date, dayOpen, dayHigh, dayLow, dayClose, volume);
+//            sd.listStocks();
             numRecords++;
         }
         file.close();
         System.out.println("Inserted "+numRecords+" records in database");
     }
+    public int findStockId(String stockSymbol){
+        Session session = factory.openSession();
+        int stockIdVal = 0;
+        try{
+            List ret = session.createSQLQuery("SELECT stockid FROM stocklist WHERE stockSymbol=\""+stockSymbol+"\"").list();
+            Iterator e = ret.iterator();
+            if(e.hasNext() == false) {
+                System.out.println("Cannot add stock entry since Stock record not in database");
+                return stockIdVal;
+            }
+            StockList sl = (StockList) e.next();
+            return sl.getStockId();
 
+        } catch (HibernateException e){
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return stockIdVal;
+    }
     public void addStock(String stockSymbol, String stockName) throws InterruptedException{
         //check to see if the stock symbol exists in the database table
         if(sd.doesStockSymbolExists(stockSymbol)) return;
@@ -105,7 +125,6 @@ public class StockData{
             session.close();
         }
         System.out.println("Stock Found: "+stockSymbol);
-        Thread.sleep(1000);
         return true;
     }
     public void addStockHistory(String sym, String date, double open, double high,
@@ -129,6 +148,7 @@ public class StockData{
         Transaction trans = null;
         try{
             trans = session.beginTransaction();
+            System.out.println("Current stocks in the database");
             List stocks = session.createQuery("FROM StockList").list();
             for (Iterator i = stocks.iterator(); i.hasNext();){
                 StockList st = (StockList) i.next();
