@@ -95,7 +95,7 @@ public class StockData{
         //if it doesn't then add it
         System.out.println("New Stock added: "+ stockSymbol + ", "+ stockName);
         Session session = factory.openSession();
-        Transaction trans = null;
+//        Transaction trans = null;
         try{
 //            trans = session.beginTransaction();
             StockList stock = new StockList(stockSymbol, stockName);
@@ -129,14 +129,14 @@ public class StockData{
     public void addStockHistory(int stockId, String date, double open, double high,
                                 double low, double close, int vol){
         Session session = factory.openSession();
-        Transaction trans = null;
+//        Transaction trans = null;
         try{
-            trans = session.beginTransaction();
+//            trans = session.beginTransaction();
             StockHistory stock = new StockHistory(stockId, date, open, high, low, close, vol);
             session.save(stock);
-            trans.commit();
+//            trans.commit();
         }catch (HibernateException e) {
-            if (trans!=null) trans.rollback();
+//            if (trans!=null) trans.rollback();
             e.printStackTrace();
         }finally {
             session.close();
@@ -183,7 +183,6 @@ public class StockData{
     public static void printValues(String[] l) throws InterruptedException
     {
         for (String s: l) System.out.println(s);
-
 //        Thread.sleep(1000);
     }
 

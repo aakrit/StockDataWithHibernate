@@ -6,8 +6,6 @@
       <change type="DELETED" beforePath="$PROJECT_DIR$/src/stocks/StockHistory.class" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/src/stocks/StockList.class" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/stocks/StockData.java" afterPath="$PROJECT_DIR$/src/stocks/StockData.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/StockHistory.hbm.xml" afterPath="$PROJECT_DIR$/src/StockHistory.hbm.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/stocks/StockHistory.java" afterPath="$PROJECT_DIR$/src/stocks/StockHistory.java" />
     </list>
     <ignored path="StockData.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -84,7 +82,7 @@
       <file leaf-file-name="StockData.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/stocks/StockData.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="232" column="39" selection-start="8671" selection-end="8671" vertical-scroll-proportion="0.8251121">
+            <state line="184" column="48" selection-start="6877" selection-end="6877" vertical-scroll-proportion="1.0605382">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -661,7 +659,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/stocks/StockData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="232" column="39" selection-start="8671" selection-end="8671" vertical-scroll-proportion="0.8251121">
+        <state line="184" column="48" selection-start="6877" selection-end="6877" vertical-scroll-proportion="1.0605382">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
