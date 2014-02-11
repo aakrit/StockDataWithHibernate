@@ -225,7 +225,7 @@ public class StockData{
                 e.printStackTrace();
             }
         }
-        factory.close();
+//        factory.close();
         long finishTime = System.currentTimeMillis();
         System.out.println("Time taken for computation: "+((double)((finishTime-startTime)/1000))+" seconds!");
         //Type an SQL Query to search for results

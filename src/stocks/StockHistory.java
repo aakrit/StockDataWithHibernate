@@ -12,6 +12,7 @@ public class StockHistory
     private int recordId, stockId, volume;
     private double dayOpen, dayHigh, dayLow, dayClose;
     private String recordDate;
+    public StockHistory(){}
     public StockHistory(int id, String date, double open, double high, double low, double close, int vol){
         stockId = id;
         recordDate = date;
